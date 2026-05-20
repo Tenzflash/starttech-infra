@@ -1,0 +1,15 @@
+﻿# Terraform local files (NEVER commit these)
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
