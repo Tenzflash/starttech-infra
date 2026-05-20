@@ -1,0 +1,10 @@
+﻿variable "vpc_id"           { type = string }
+variable "subnet_ids"       { type = list(string) }
+variable "alb_sg_id"        { type = string }
+variable "ec2_sg_id"        { type = string }
+variable "environment"      { type = string }
+variable "ecr_repo_url"     { type = string }
+variable "instance_type"    { type = string }
+variable "min_size"         { type = number }
+variable "max_size"         { type = number }
+variable "desired_capacity" { type = number }
