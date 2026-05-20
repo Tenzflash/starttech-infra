@@ -33,6 +33,8 @@ module "compute" {
 }
 
 module "storage" {
+  
+  subnet_ids      = module.networking.private_subnet_ids
   source          = "./modules/storage"
   environment     = var.environment
   aws_region      = var.aws_region
@@ -45,3 +47,4 @@ module "monitoring" {
   environment     = var.environment
   log_group_names = [module.compute.backend_log_group_name]
 }
+

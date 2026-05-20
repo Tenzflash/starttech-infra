@@ -37,7 +37,7 @@ resource "aws_s3_bucket_policy" "frontend" {
 
 resource "aws_cloudfront_distribution" "frontend" {
   origin {
-    domain_name = aws_s3_bucket.frontend.website_endpoint
+    domain_name = "${aws_s3_bucket.frontend.bucket}.s3-website-${var.aws_region}.amazonaws.com"
     origin_id   = "S3-Frontend"
     custom_origin_config {
       http_port              = 80
@@ -95,3 +95,4 @@ data "aws_security_group" "redis" {
 data "aws_vpc" "main" {
   tags = { Name = "${var.environment}-vpc" }
 }
+
