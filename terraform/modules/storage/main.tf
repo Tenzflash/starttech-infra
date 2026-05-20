@@ -1,6 +1,7 @@
-﻿resource "random_id" "suffix" { byte_length = 4 }
+﻿resource "random_id" "suffix" {
+  byte_length = 4
+}
 
-# S3 Bucket for Frontend
 resource "aws_s3_bucket" "frontend" {
   bucket = "${var.environment}-starttech-frontend-${random_id.suffix.hex}"
   tags   = { Name = "${var.environment}-frontend-s3" }
@@ -34,16 +35,15 @@ resource "aws_s3_bucket_policy" "frontend" {
   })
 }
 
-# CloudFront Distribution
 resource "aws_cloudfront_distribution" "frontend" {
   origin {
     domain_name = aws_s3_bucket.frontend.website_endpoint
     origin_id   = "S3-Frontend"
     custom_origin_config {
-      http_port             = 80
-      https_port            = 443
+      http_port              = 80
+      https_port             = 443
       origin_protocol_policy = "http-only"
-      origin_ssl_protocols  = ["TLSv1.2"]
+      origin_ssl_protocols   = ["TLSv1.2"]
     }
   }
   enabled             = true
@@ -55,7 +55,7 @@ resource "aws_cloudfront_distribution" "frontend" {
     viewer_protocol_policy = "redirect-to-https"
     forwarded_values {
       query_string = false
-      cookies      { forward = "none" }
+      cookies { forward = "none" }
     }
     min_ttl     = 0
     default_ttl = 3600
@@ -70,7 +70,6 @@ resource "aws_cloudfront_distribution" "frontend" {
   tags = { Name = "${var.environment}-cloudfront" }
 }
 
-# ElastiCache Redis
 resource "aws_elasticache_subnet_group" "redis" {
   name       = "${var.environment}-redis-subnet-group"
   subnet_ids = var.subnet_ids
@@ -85,11 +84,11 @@ resource "aws_elasticache_cluster" "redis" {
   port                 = 6379
   security_group_ids   = [data.aws_security_group.redis.id]
   subnet_group_name    = aws_elasticache_subnet_group.redis.name
-  tags = { Name = "${var.environment}-redis" }
+  tags                 = { Name = "${var.environment}-redis" }
 }
 
 data "aws_security_group" "redis" {
-  name = "${var.environment}-redis-sg"
+  name   = "${var.environment}-redis-sg"
   vpc_id = data.aws_vpc.main.id
 }
 
