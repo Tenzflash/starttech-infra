@@ -1,0 +1,35 @@
+﻿[
+  {
+    "name": "HighCPUUtilization",
+    "metric": "CPUUtilization",
+    "namespace": "AWS/EC2",
+    "threshold": 80,
+    "period": 300,
+    "evaluationPeriods": 2,
+    "statistic": "Average",
+    "comparisonOperator": "GreaterThanThreshold",
+    "description": "Alarm when CPU exceeds 80% for 10 minutes"
+  },
+  {
+    "name": "ALB5xxErrors",
+    "metric": "HTTPCode_ELB_5XX_Count",
+    "namespace": "AWS/ApplicationELB",
+    "threshold": 10,
+    "period": 60,
+    "evaluationPeriods": 1,
+    "statistic": "Sum",
+    "comparisonOperator": "GreaterThanThreshold",
+    "description": "Alarm when ALB 5XX errors exceed 10 per minute"
+  },
+  {
+    "name": "LowASGInstances",
+    "metric": "GroupDesiredCapacity",
+    "namespace": "AWS/AutoScaling",
+    "threshold": 1,
+    "period": 300,
+    "evaluationPeriods": 1,
+    "statistic": "Minimum",
+    "comparisonOperator": "LessThanThreshold",
+    "description": "Alarm when ASG has fewer than 1 instance"
+  }
+]

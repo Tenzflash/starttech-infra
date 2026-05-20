@@ -1,5 +1,4 @@
-﻿# CloudWatch Alarms
-resource "aws_cloudwatch_metric_alarm" "backend_high_cpu" {
+﻿resource "aws_cloudwatch_metric_alarm" "backend_high_cpu" {
   alarm_name          = "${var.environment}-backend-high-cpu"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = 2
@@ -31,7 +30,6 @@ resource "aws_cloudwatch_metric_alarm" "alb_5xx_errors" {
   tags = { Environment = var.environment }
 }
 
-# CloudWatch Dashboard (built dynamically to avoid interpolation issues)
 data "aws_region" "current" {}
 
 resource "aws_cloudwatch_dashboard" "starttech" {
@@ -39,21 +37,27 @@ resource "aws_cloudwatch_dashboard" "starttech" {
   dashboard_body = jsonencode({
     widgets = [
       {
-        type = "metric"
-        x = 0; y = 0; width = 12; height = 6
+        type   = "metric"
+        x      = 0
+        y      = 0
+        width  = 12
+        height = 6
         properties = {
-          view = "timeSeries"
+          view    = "timeSeries"
           metrics = [["AWS/EC2", "CPUUtilization", "AutoScalingGroupName", "${var.environment}-backend-asg"]]
           region  = data.aws_region.current.name
           title   = "Backend CPU Utilization"
         }
       },
       {
-        type = "log"
-        x = 12; y = 0; width = 12; height = 6
+        type   = "log"
+        x      = 12
+        y      = 0
+        width  = 12
+        height = 6
         properties = {
-          view = "table"
-          logs = ["/starttech/${var.environment}/backend"]
+          view   = "table"
+          logs   = ["/starttech/${var.environment}/backend"]
           region = data.aws_region.current.name
           title  = "Application Logs"
         }

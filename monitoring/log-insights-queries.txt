@@ -1,0 +1,28 @@
+﻿# Query 1: Find all ERROR and PANIC messages
+fields @timestamp, @message
+| filter @message like /ERROR|PANIC|FATAL/
+| sort @timestamp desc
+| limit 50
+
+# Query 2: Count errors per minute
+fields @timestamp
+| filter @message like /ERROR/
+| stats count(*) as error_count by bin(1m)
+| sort @timestamp desc
+
+# Query 3: Find slow requests (duration > 1000ms)
+fields @timestamp, duration, @message
+| filter duration > 1000
+| sort duration desc
+| limit 20
+
+# Query 4: Request rate and latency
+fields @timestamp, duration
+| stats avg(duration) as avg_latency, count(*) as request_count by bin(5m)
+| sort @timestamp desc
+
+# Query 5: Health check failures
+fields @timestamp, @message
+| filter @message like /health.*failed|503|502/
+| sort @timestamp desc
+| limit 20

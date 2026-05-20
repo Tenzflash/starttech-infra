@@ -1,12 +1,11 @@
-﻿# IAM Role for EC2 (CloudWatch, ECR, SSM access)
-resource "aws_iam_role" "ec2_role" {
+﻿resource "aws_iam_role" "ec2_role" {
   name = "${var.environment}-ec2-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
-      Effect = "Allow"
+      Effect    = "Allow"
       Principal = { Service = "ec2.amazonaws.com" }
-      Action = "sts:AssumeRole"
+      Action    = "sts:AssumeRole"
     }]
   })
 }
@@ -29,27 +28,28 @@ resource "aws_iam_instance_profile" "ec2_profile" {
   role = aws_iam_role.ec2_role.name
 }
 
-# Launch Template
 resource "aws_launch_template" "backend" {
-  name_prefix   = "${var.environment}-backend-"
-  image_id      = data.aws_ami.amazon_linux_2.id
-  instance_type = var.instance_type
+  name_prefix            = "${var.environment}-backend-"
+  image_id               = data.aws_ami.amazon_linux_2.id
+  instance_type          = var.instance_type
   iam_instance_profile { name = aws_iam_instance_profile.ec2_profile.name }
   vpc_security_group_ids = [var.ec2_sg_id]
-  user_data = base64encode(file("${path.module}/user_data.sh"))
+  user_data              = base64encode(file("${path.module}/user_data.sh"))
   tag_specifications {
     resource_type = "instance"
-    tags = { Name = "${var.environment}-backend" }
+    tags          = { Name = "${var.environment}-backend" }
   }
 }
 
 data "aws_ami" "amazon_linux_2" {
   most_recent = true
   owners      = ["amazon"]
-  filter { name = "name"; values = ["amzn2-ami-hvm-*-x86_64-gp2"] }
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
 }
 
-# Auto Scaling Group
 resource "aws_autoscaling_group" "backend" {
   name                = "${var.environment}-backend-asg"
   desired_capacity    = var.desired_capacity
@@ -67,10 +67,13 @@ resource "aws_autoscaling_group" "backend" {
       min_healthy_percentage = 50
     }
   }
-  tag { key = "Name"; value = "${var.environment}-backend"; propagate_at_launch = true }
+  tag {
+    key                 = "Name"
+    value               = "${var.environment}-backend"
+    propagate_at_launch = true
+  }
 }
 
-# Application Load Balancer
 resource "aws_lb" "app" {
   name               = "${var.environment}-alb"
   internal           = false
@@ -104,7 +107,6 @@ resource "aws_lb_listener" "http" {
   }
 }
 
-# CloudWatch Log Group
 resource "aws_cloudwatch_log_group" "backend" {
   name              = "/starttech/${var.environment}/backend"
   retention_in_days = 30
